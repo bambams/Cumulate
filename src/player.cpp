@@ -1,13 +1,15 @@
 #include "player.h"
 #include <iostream>
 
-Player::Player()
+Player::Player():
+	jetpack(false)
 {
 	image = al_load_bitmap("data/char.png");
 	x = 0;
 	y = 0;
 	move_left = false;
 	move_right = false;
+	jump = false;
 }
 
 void Player::Set_position(float ix, float iy)
@@ -28,7 +30,12 @@ void Player::Event(ALLEGRO_EVENT& event)
 		{
 			move_right = true;
 		}
-		if(ALLEGRO_KEY_UP == event.keyboard.keycode)
+		if(ALLEGRO_KEY_LCTRL == event.keyboard.keycode)
+		{
+			jetpack = true;
+			jump = false;
+		}
+		else if(ALLEGRO_KEY_UP == event.keyboard.keycode)
 		{
 			jump = true;
 		}
@@ -42,6 +49,10 @@ void Player::Event(ALLEGRO_EVENT& event)
 		if(ALLEGRO_KEY_RIGHT == event.keyboard.keycode)
 		{
 			move_right = false;
+		}
+		if(ALLEGRO_KEY_LCTRL == event.keyboard.keycode)
+		{
+			jetpack = false;
 		}
 		if(ALLEGRO_KEY_UP == event.keyboard.keycode)
 		{
@@ -83,6 +94,12 @@ void Player::Update(float dt)
 	if(!touching_ground)
 	{
 		ys += 1000*dt;
+	}
+
+	//Thrust
+	if(jetpack)
+	{
+		ys -= 3000*dt;
 	}
 	
 	x += xs*dt;
